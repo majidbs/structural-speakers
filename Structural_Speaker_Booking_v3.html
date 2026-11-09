@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stantec Vancouver Structural Group – Guest Presenter Booking</title>
+<style>
+  :root{--g:#00353e;--a:#00a3a1;--bg:#f4f6f7;--card:#fff;--t:#1d2b30;--m:#5c6b70;--b:#d6dde0;--ok:#1e8e3e;--no:#b3261e}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--t)}
+  header{background:var(--g);color:#fff;padding:24px 20px}
+  header h1{margin:0;font-size:1.5rem}
+  header p{margin:6px 0 0;opacity:.85}
+  main{max-width:1000px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--b);border-radius:10px;padding:20px;margin-bottom:20px}
+  h2{margin-top:0;font-size:1.15rem;color:var(--g)}
+  .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;font-size:.92rem}
+  .info div{background:var(--bg);padding:10px;border-radius:6px}
+  .months{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .month h3{margin:0 0 8px;font-size:1rem}
+  .slot{display:flex;justify-content:space-between;align-items:center;width:100%;padding:10px 12px;margin-bottom:6px;border:1px solid var(--b);border-radius:6px;background:#fff;font:inherit;text-align:left;color:var(--t)}
+  .slot.avail{cursor:pointer;border-color:var(--a)}
+  .slot.avail:hover,.slot.avail:focus{background:#e6f6f6;outline:2px solid var(--a)}
+  .slot.sel{background:var(--a);color:#fff}
+  .slot.taken{color:var(--m);background:#f0f0f0;cursor:not-allowed}
+  .tag{font-size:.75rem;padding:2px 8px;border-radius:10px;background:#e6f6f6;color:var(--g);white-space:nowrap}
+  .taken .tag{background:#e3e3e3;color:var(--m)}
+  .sel .tag{background:#fff;color:var(--g)}
+  .local{display:block;font-size:.78rem;opacity:.8}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .full{grid-column:1/-1}
+  label{font-weight:600;font-size:.88rem;display:block;margin-bottom:4px}
+  input,select,textarea{width:100%;padding:9px;border:1px solid var(--b);border-radius:6px;font:inherit}
+  textarea{min-height:90px}
+  .btn{background:var(--g);color:#fff;border:0;padding:12px 22px;border-radius:6px;font-size:1rem;cursor:pointer;display:inline-block;text-decoration:none}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.sm{font-size:.9rem;padding:9px 14px;margin:0 8px 8px 0}
+  .chosen{padding:10px;border-radius:6px;background:#e6f6f6;font-weight:600}
+  .msg{padding:14px;border-radius:6px;display:none}
+  .msg.ok{display:block;background:#e7f4ea;border:1px solid var(--ok)}
+  .msg.err{display:block;background:#fbeaea;border:1px solid var(--no)}
+  .small{font-size:.82rem;color:var(--m)}
+  .hidden{display:none}
+  @media(max-width:640px){form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Guest Presenter Booking</h1>
+  <p>Stantec Vancouver Structural Group, Structural Staffing Meeting (bi-weekly, Thursdays)</p>
+</header>
+
+<main>
+  <section class="card">
+    <h2>About the session</h2>
+    <div class="info">
+      <div><strong>When:</strong> <span id="whenTxt"></span></div>
+      <div><strong>Format:</strong> Microsoft Teams (in person at the Vancouver office optional)</div>
+      <div><strong>Slot length:</strong> <span id="lenTxt"></span></div>
+      <div><strong>Audience:</strong> Structural engineers and technologists</div>
+    </div>
+    <p class="small">Pick an open date below and submit your talk details. We'll confirm by email and send you the Teams invitation. Times are shown in Pacific Time and in your local time.</p>
+  </section>
+
+  <section class="card">
+    <h2>1. Select a date</h2>
+    <div class="months" id="months" aria-label="Available presentation dates"></div>
+  </section>
+
+  <!-- Shown when a Microsoft Form is used -->
+  <section class="card hidden" id="formMode">
+    <h2>2. Submit your presentation details</h2>
+    <div class="chosen" id="chosenF" aria-live="polite">No date selected yet.</div>
+    <p>Clicking the button opens a short Microsoft Form in a new tab with your date already filled in. Please complete and submit it.</p>
+    <a class="btn" id="formBtn" href="#" target="_blank" rel="noopener" aria-disabled="true" style="opacity:.45;pointer-events:none">Open request form</a>
+    <p class="small">All bookings are tentative until confirmed by the organizer.</p>
+  </section>
+
+  <!-- Shown when no Form URL is set (email mode) -->
+  <section class="card" id="emailMode">
+    <h2>2. Your presentation details</h2>
+    <form id="bookForm" novalidate>
+      <div class="full chosen" id="chosen" aria-live="polite">No date selected yet.</div>
+      <div><label for="name">Presenter name *</label><input id="name" required></div>
+      <div><label for="company">Company / organization *</label><input id="company" required></div>
+      <div><label for="email">Email *</label><input id="email" type="email" required></div>
+      <div><label for="phone">Phone</label><input id="phone" type="tel"></div>
+      <div class="full"><label for="title">Presentation title *</label><input id="title" required></div>
+      <div class="full"><label for="abstract">Abstract (about 150 words) *</label><textarea id="abstract" required></textarea></div>
+      <div class="full"><label for="bio">Short presenter bio</label><textarea id="bio"></textarea></div>
+      <div><label for="format">Attendance</label>
+        <select id="format"><option>Teams (remote)</option><option>In person, Vancouver office</option></select></div>
+      <div><label for="cpd">Suitable for CPD / PDH credit?</label>
+        <select id="cpd"><option>Yes</option><option>No</option><option>Not sure</option></select></div>
+      <div class="full"><label for="promo">Is the content product- or vendor-specific?</label>
+        <select id="promo"><option>No, technical / educational</option><option>Yes, includes product information</option></select></div>
+      <div class="full">
+        <button class="btn" id="submitBtn" type="submit" disabled>Request this date</button>
+        <p class="small">All bookings are tentative until confirmed by the organizer.</p>
+      </div>
+      <div class="full msg" id="msg" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+</main>
+
+<script>
+/* ================= ORGANIZER SETTINGS: edit this block only ================= */
+const CONFIG = {
+  organizerEmail: "Majid.BaradaranShoraka@stantec.com",
+  seriesAnchor:   "2022-01-13",   // first meeting of the bi-weekly series (a Thursday)
+  intervalDays:   14,
+  startTimePT:    "09:30",        // Pacific time, 24h (calendar shows 08:30 – confirm)
+  durationMin:    30,
+  monthsAhead:    6,
+  minLeadDays:    14,
+  // Confirmed dates (add once confirmed, then re-publish the page)
+  booked:   [ /* "2026-11-26", */ ],
+  // Dates with no session (holidays, cancellations)
+  blackout: [ "2026-12-24", "2026-12-31" ],
+  // MICROSOFT FORMS MODE (no premium licence needed):
+  // Paste the Form's pre-filled link here, with the date answer typed as DATE.
+  // Example: "https://forms.office.com/Pages/ResponsePage.aspx?id=XXXX&r1a2b3c=DATE"
+  // Leave blank "" to use the built-in form + email buttons instead.
+  formUrl: "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=LG88QZohkkaX0_K02AKB55PT4Y8pmxdLklsaUcl4GthUMzk3TDEzVUxIMFJWMDMwVlQ1S0VMNERVMi4u&r4ec46e16da934e1d81ed72ad1af3230d=DATE"
+};
+/* ========================================================================== */
+
+(function(){
+  const $ = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2,"0");
+  const ymd = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth()+1)}-${pad(d.getUTCDate())}`;
+  const useForm = !!CONFIG.formUrl.trim();
+  let selected = null;
+
+  if (useForm){ $("formMode").classList.remove("hidden"); $("emailMode").classList.add("hidden"); }
+
+  function ptToDate(dateStr, timeStr){
+    const [y,m,d] = dateStr.split("-").map(Number), [hh,mm] = timeStr.split(":").map(Number);
+    let guess = Date.UTC(y,m-1,d,hh+8,mm);
+    const fmt = new Intl.DateTimeFormat("en-US",{timeZone:"America/Vancouver",hour:"numeric",hourCycle:"h23"});
+    if (Number(fmt.format(new Date(guess))) !== hh) guess -= 3600000;
+    return new Date(guess);
+  }
+  const fmtPT = d => d.toLocaleString("en-CA",{timeZone:"America/Vancouver",hour:"numeric",minute:"2-digit"});
+  const fmtLocal = d => d.toLocaleString(undefined,{weekday:"short",hour:"numeric",minute:"2-digit",timeZoneName:"short"});
+  const longDate = s => new Date(s+"T12:00:00Z").toLocaleDateString("en-CA",{weekday:"long",year:"numeric",month:"long",day:"numeric",timeZone:"UTC"});
+
+  const sample = ptToDate("2026-01-15", CONFIG.startTimePT);
+  $("whenTxt").textContent = `Every second Thursday, ${fmtPT(sample)}–${fmtPT(new Date(sample.getTime()+CONFIG.durationMin*60000))} PT`;
+  $("lenTxt").textContent = `${CONFIG.durationMin} minutes including Q&A`;
+
+  const anchor = new Date(CONFIG.seriesAnchor+"T00:00:00Z");
+  const now = new Date(), todayUTC = Date.UTC(now.getFullYear(),now.getMonth(),now.getDate());
+  const minDate = todayUTC + CONFIG.minLeadDays*86400000;
+  const maxD = new Date(todayUTC); maxD.setUTCMonth(maxD.getUTCMonth()+CONFIG.monthsAhead);
+  const sessions = [];
+  for (let k = Math.ceil((todayUTC-anchor.getTime())/(CONFIG.intervalDays*86400000)); ; k++){
+    const d = new Date(anchor.getTime()+k*CONFIG.intervalDays*86400000);
+    if (d > maxD) break;
+    const s = ymd(d);
+    let status = "avail";
+    if (CONFIG.blackout.includes(s)) status = "none";
+    else if (CONFIG.booked.includes(s)) status = "booked";
+    else if (d.getTime() < minDate) status = "soon";
+    sessions.push({date:s,status});
+  }
+
+  const months = {};
+  sessions.forEach(s => {
+    const key = new Date(s.date+"T12:00:00Z").toLocaleDateString("en-CA",{month:"long",year:"numeric",timeZone:"UTC"});
+    (months[key] = months[key] || []).push(s);
+  });
+  const labels = {avail:"Available",booked:"Booked",none:"No session",soon:"Closed"};
+  const wrap = $("months");
+  Object.entries(months).forEach(([m,list])=>{
+    const col = document.createElement("div"); col.className = "month";
+    col.innerHTML = `<h3>${m}</h3>`;
+    list.forEach(s=>{
+      const b = document.createElement("button"); b.type = "button";
+      const start = ptToDate(s.date, CONFIG.startTimePT);
+      b.className = "slot " + (s.status==="avail" ? "avail" : "taken");
+      b.disabled = s.status !== "avail";
+      b.innerHTML = `<span>${longDate(s.date).replace(/, \d{4}$/,"")}<span class="local">${fmtPT(start)} PT · your time: ${fmtLocal(start)}</span></span><span class="tag">${labels[s.status]}</span>`;
+      b.addEventListener("click",()=>{
+        wrap.querySelectorAll(".slot.sel").forEach(x=>x.classList.remove("sel"));
+        b.classList.add("sel"); selected = s.date;
+        const txt = `Selected: ${longDate(s.date)}, ${fmtPT(start)} PT`;
+        if (useForm){
+          $("chosenF").textContent = txt;
+          const fb = $("formBtn");
+          fb.href = CONFIG.formUrl.replace("DATE", encodeURIComponent(s.date));
+          fb.style.opacity = "1"; fb.style.pointerEvents = "auto"; fb.removeAttribute("aria-disabled");
+          fb.focus();
+        } else {
+          $("chosen").textContent = txt;
+          $("submitBtn").disabled = false;
+          $("name").focus();
+        }
+      });
+      col.appendChild(b);
+    });
+    wrap.appendChild(col);
+  });
+
+  function makeIcs(title){
+    const st = ptToDate(selected, CONFIG.startTimePT), en = new Date(st.getTime()+CONFIG.durationMin*60000);
+    const z = d => d.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"");
+    const esc = t => t.replace(/[,;\\]/g, m=>"\\"+m).replace(/\n/g,"\\n");
+    const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Stantec Structural//Booking//EN","BEGIN:VEVENT",
+      `UID:${Date.now()}@stantec-structural`,`DTSTAMP:${z(new Date())}`,`DTSTART:${z(st)}`,`DTEND:${z(en)}`,
+      `SUMMARY:${esc("TENTATIVE: Stantec Structural presentation – "+title)}`,
+      `DESCRIPTION:${esc("Tentative hold pending confirmation. Teams invitation will follow from "+CONFIG.organizerEmail)}`,
+      "STATUS:TENTATIVE","END:VEVENT","END:VCALENDAR"].join("\r\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
+    a.download = `Stantec_Structural_${selected}.ics`;
+    a.textContent = "Download a tentative calendar hold (.ics)";
+    return a;
+  }
+
+  $("bookForm").addEventListener("submit", ev=>{
+    ev.preventDefault();
+    const msg = $("msg"); msg.className = "full msg"; msg.innerHTML = "";
+    const v = id => $(id).value.trim();
+    const missing = ["name","company","email","title","abstract"].filter(id=>!v(id));
+    if (!selected || missing.length || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("email"))){
+      msg.className = "full msg err";
+      msg.textContent = "Please select a date and complete all required fields (*) with a valid email.";
+      return;
+    }
+    const to = CONFIG.organizerEmail;
+    const subj = `Presenter booking request – ${selected} – ${v("name")}`;
+    const body =
+`Booking request – Structural Staffing Meeting
+
+Date: ${longDate(selected)}, ${CONFIG.startTimePT} PT
+Presenter: ${v("name")}
+Company: ${v("company")}
+Email: ${v("email")}
+Phone: ${v("phone")}
+Title: ${v("title")}
+
+Abstract:
+${v("abstract")}
+
+Bio:
+${v("bio")}
+
+Attendance: ${v("format")}
+CPD eligible: ${v("cpd")}
+Product content: ${v("promo")}`;
+    const e = encodeURIComponent;
+    const links = [
+      ["Outlook (work / Microsoft 365)", `https://outlook.office.com/mail/deeplink/compose?to=${e(to)}&subject=${e(subj)}&body=${e(body)}`],
+      ["Outlook.com / Hotmail", `https://outlook.live.com/mail/0/deeplink/compose?to=${e(to)}&subject=${e(subj)}&body=${e(body)}`],
+      ["Gmail", `https://mail.google.com/mail/?view=cm&fs=1&to=${e(to)}&su=${e(subj)}&body=${e(body)}`],
+      ["Desktop email app", `mailto:${to}?subject=${e(subj)}&body=${e(body)}`]
+    ];
+    msg.className = "full msg ok";
+    msg.innerHTML = `<strong>One more step: send your request.</strong><br>Choose your email service. A new message opens already filled in. Then press <em>Send</em>.<br><br>`;
+    links.forEach(([label,href])=>{
+      const a = document.createElement("a");
+      a.href = href; a.target = "_blank"; a.rel = "noopener";
+      a.className = "btn sm"; a.textContent = label;
+      msg.appendChild(a);
+    });
+    const p = document.createElement("p");
+    p.innerHTML = `If none of these work, copy the text below and email it to <strong>${to}</strong>.`;
+    msg.appendChild(p);
+    const ta = document.createElement("textarea");
+    ta.readOnly = true; ta.style.minHeight = "170px";
+    ta.value = `To: ${to}\nSubject: ${subj}\n\n${body}`;
+    ta.setAttribute("aria-label","Booking request text");
+    msg.appendChild(ta);
+    const cp = document.createElement("button");
+    cp.type = "button"; cp.className = "btn sm"; cp.style.marginTop = "8px"; cp.textContent = "Copy request text";
+    cp.addEventListener("click", async ()=>{
+      try { await navigator.clipboard.writeText(ta.value); }
+      catch(_) { ta.select(); document.execCommand("copy"); }
+      cp.textContent = "Copied ✓";
+    });
+    msg.appendChild(cp);
+    msg.appendChild(document.createElement("br"));
+    msg.appendChild(makeIcs(v("title")));
+    msg.scrollIntoView({behavior:"smooth",block:"start"});
+  });
+})();
+</script>
+</body>
+</html>
